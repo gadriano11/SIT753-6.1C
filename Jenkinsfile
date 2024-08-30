@@ -19,7 +19,7 @@ pipeline {
                     try {
                         echo 'Running Unit Tests and Integration Tests using Maven...'
                         echo 'Tool: Maven'
-                        // Simulate test execution (replace with actual commands if necessary)
+                        // Simulate test execution
                         sh 'mvn test'
                         currentBuild.result = 'SUCCESS'
                     } catch (Exception e) {
@@ -30,16 +30,14 @@ pipeline {
             }
             post {
                 success {
-                    mail to: 'gabriel_adriano11@yahoo.com',
+                    mail to: 'gab.dev.student11@gmail.com',
                         subject: "Unit and Integration Tests Succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                        body: "The Unit and Integration Tests stage succeeded. Please check Jenkins for details.",
-                        attachLog: true
+                        body: "The Unit and Integration Tests stage succeeded. Please check Jenkins for details.\n\nLogs:\n${currentBuild.rawBuild.getLog(50).join('\n')}"
                 }
                 failure {
-                    mail to: 'gabriel_adriano11@yahoo.com',
+                    mail to: 'gab.dev.student11@gmail.com',
                         subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                        body: "The Unit and Integration Tests stage failed. Please check Jenkins for details.",
-                        attachLog: true
+                        body: "The Unit and Integration Tests stage failed. Please check Jenkins for details.\n\nLogs:\n${currentBuild.rawBuild.getLog(50).join('\n')}"
                 }
             }
         }
@@ -55,7 +53,7 @@ pipeline {
                     try {
                         echo 'Performing Security Scan using OWASP Dependency-Check...'
                         echo 'Tool: OWASP Dependency-Check'
-                        // Simulate security scan (replace with actual commands if necessary)
+                        // Simulate security scan
                         sh 'mvn dependency-check:check'
                         currentBuild.result = 'SUCCESS'
                     } catch (Exception e) {
@@ -66,16 +64,14 @@ pipeline {
             }
             post {
                 success {
-                    mail to: 'gabriel_adriano11@yahoo.com',
+                    mail to: 'gab.dev.student11@gmail.com',
                         subject: "Security Scan Succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                        body: "The Security Scan stage succeeded. Please check Jenkins for details.",
-                        attachLog: true
+                        body: "The Security Scan stage succeeded. Please check Jenkins for details.\n\nLogs:\n${currentBuild.rawBuild.getLog(50).join('\n')}"
                 }
                 failure {
-                    mail to: 'gabriel_adriano11@yahoo.com',
+                    mail to: 'gab.dev.student11@gmail.com',
                         subject: "Security Scan Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                        body: "The Security Scan stage failed. Please check Jenkins for details.",
-                        attachLog: true
+                        body: "The Security Scan stage failed. Please check Jenkins for details.\n\nLogs:\n${currentBuild.rawBuild.getLog(50).join('\n')}"
                 }
             }
         }
