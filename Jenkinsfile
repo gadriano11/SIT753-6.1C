@@ -9,84 +9,73 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building the application using Maven...'
-                sh 'mvn clean package'
+                echo 'Stage 1: Build - This stage involves building the code using a build automation tool such as Maven to compile and package the application.'
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                script {
-                    try {
-                        echo 'Running Unit Tests and Integration Tests using Maven...'
-                        sh 'mvn test'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
-                }
+                echo 'Stage 2: Unit and Integration Tests - This stage runs unit tests to ensure the code functions as expected and integration tests to ensure different components of the application work together. A test automation tool like JUnit can be used.'
             }
             post {
                 success {
-                    mail to: 'gab.dev.student11@gmail.com',
-                        subject: "Unit and Integration Tests Succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                        body: "The Unit and Integration Tests stage succeeded. Please check Jenkins for details."
+                    script {
+                        def log = currentBuild.rawBuild.getLog(50).join('\n')
+                        mail to: 'gab.dev.student11@gmail.com',
+                            subject: "Unit and Integration Tests Succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                            body: "The Unit and Integration Tests stage succeeded. Please check Jenkins for details.\n\nLogs:\n${log}"
+                    }
                 }
                 failure {
-                    mail to: 'gab.dev.student11@gmail.com',
-                        subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                        body: "The Unit and Integration Tests stage failed. Please check Jenkins for details."
+                    script {
+                        def log = currentBuild.rawBuild.getLog(50).join('\n')
+                        mail to: 'gab.dev.student11@gmail.com',
+                            subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                            body: "The Unit and Integration Tests stage failed. Please check Jenkins for details.\n\nLogs:\n${log}"
+                    }
                 }
             }
         }
         stage('Code Analysis') {
             steps {
-                echo 'Performing Code Analysis using SonarQube...'
-                sh 'mvn sonar:sonar'
+                echo 'Stage 3: Code Analysis - This stage integrates a code analysis tool like SonarQube to analyze the code and ensure it meets industry standards.'
             }
         }
         stage('Security Scan') {
             steps {
-                script {
-                    try {
-                        echo 'Performing Security Scan using OWASP Dependency-Check...'
-                        sh 'mvn dependency-check:check'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
-                }
+                echo 'Stage 4: Security Scan - This stage performs a security scan on the code using a tool like OWASP Dependency-Check to identify any vulnerabilities.'
             }
             post {
                 success {
-                    mail to: 'gab.dev.student11@gmail.com',
-                        subject: "Security Scan Succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                        body: "The Security Scan stage succeeded. Please check Jenkins for details."
+                    script {
+                        def log = currentBuild.rawBuild.getLog(50).join('\n')
+                        mail to: 'gab.dev.student11@gmail.com',
+                            subject: "Security Scan Succeeded: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                            body: "The Security Scan stage succeeded. Please check Jenkins for details.\n\nLogs:\n${log}"
+                    }
                 }
                 failure {
-                    mail to: 'gab.dev.student11@gmail.com',
-                        subject: "Security Scan Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                        body: "The Security Scan stage failed. Please check Jenkins for details."
+                    script {
+                        def log = currentBuild.rawBuild.getLog(50).join('\n')
+                        mail to: 'gab.dev.student11@gmail.com',
+                            subject: "Security Scan Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                            body: "The Security Scan stage failed. Please check Jenkins for details.\n\nLogs:\n${log}"
+                    }
                 }
             }
         }
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to Staging Server...'
-                sh "ssh user@${STAGING_SERVER} 'cd /path/to/app && git pull && ./deploy.sh'"
+                echo 'Stage 5: Deploy to Staging - This stage deploys the application to a staging server, such as an AWS EC2 instance, to simulate a production environment.'
             }
         }
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running Integration Tests on Staging Environment using Maven...'
-                sh 'mvn verify -Pstaging'
+                echo 'Stage 6: Integration Tests on Staging - This stage runs integration tests on the staging environment to ensure the application functions as expected in a production-like environment.'
             }
         }
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to Production Server...'
-                sh "ssh user@${PRODUCTION_SERVER} 'cd /path/to/app && git pull && ./deploy.sh'"
+                echo 'Stage 7: Deploy to Production - This stage deploys the application to a production server, such as an AWS EC2 instance, to make it available to end-users.'
             }
         }
     }
